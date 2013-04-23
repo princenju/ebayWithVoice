@@ -18,4 +18,13 @@ urlpatterns = patterns('',
     url(r'^users/logout$','users.views.logout'),
     url(r'^users/register$','users.views.register'),
     url(r'^users/newPage$','users.views.newPage'),
+    url(r'^users/addFriend$','users.views.addFriend'),
+    url(r'^users/showFriends$','users.views.showFriends'),
+    
+    url(r'^news/addNews$','news.views.addNews'),
+    url(r'^news/getNewsList$','news.views.getNewsList'),
+    url(r'^news/getPicture$','news.views.getPicture'),
+    url(r'^news/getVoice$','news.views.getVoice'),
+    url(r'^news/addComment$','news.views.addComment'),
+    url(r'^news/deleteNews$','news.views.deleteNews'),
 )

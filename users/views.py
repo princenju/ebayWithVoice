@@ -1,11 +1,11 @@
 
 from django.http import HttpResponse
-from models import User
+from models import Account
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required  
 
 def login(request):
-    user=auth.authenticate(username=request.GET['username'], password=request.GET['password'])
+    user=auth.authenticate(username=request.POST['username'], password=request.POST['password'])
     if user is not None:
         if user.is_active:
             auth.login(request, user)
@@ -19,11 +19,11 @@ def login(request):
 def register(request):
     userName=request.GET['username']
     passWord=request.GET['password']
-    test=User.create_user(userName, passWord, "wzn@wzn.com")
+    test=Account.create_user(userName, passWord, "wzn@wzn.com")
     test.save
     return HttpResponse(test.username)
 
-
+@login_required
 def logout(request):
     auth.logout(request)
     return HttpResponse("success")
@@ -31,3 +31,20 @@ def logout(request):
 @login_required
 def newPage(request):
     return HttpResponse(request.user.username)
+
+@login_required
+def addFriend(request):
+    name=request.POST['username']
+    friend=Account.objects(username=name).first()
+    user=Account.objects(username=request.user.username).first()
+    user.friends=user.friends+[str(friend.id)]
+    user.save()
+    request.user=user
+    return HttpResponse("add success")
+
+@login_required
+def showFriends(request):
+#    user=Account.objects(username=request.user.username).first()
+    ids=request.user.friends
+    friends=Account.objects(pk__in=ids).as_pymongo()
+    return HttpResponse(friends)
