@@ -20,6 +20,7 @@ urlpatterns = patterns('',
     url(r'^users/newPage$','users.views.newPage'),
     url(r'^users/addFriend$','users.views.addFriend'),
     url(r'^users/showFriends$','users.views.showFriends'),
+    url(r'^users/getPortrait$','users.views.getPortrait'),
     
     url(r'^news/addNews$','news.views.addNews'),
     url(r'^news/getNewsList$','news.views.getNewsList'),
@@ -27,4 +28,8 @@ urlpatterns = patterns('',
     url(r'^news/getVoice$','news.views.getVoice'),
     url(r'^news/addComment$','news.views.addComment'),
     url(r'^news/deleteNews$','news.views.deleteNews'),
+    
+    url(r'^goods/addGoods$','goods.views.addGoods'),
+    url(r'^goods/getGoods$','goods.views.getGoods'),
+    url(r'^goods/getPicture$','goods.views.getPicture'),
 )

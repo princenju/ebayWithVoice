@@ -1,6 +1,7 @@
 from mongoengine import Document, ReferenceField, CASCADE, StringField, ImageField, FileField, EmbeddedDocument
 from users.models import Account
 from mongoengine import ListField,EmbeddedDocumentField
+from goods.models import Goods
 # Create your models here.
 class Comment(EmbeddedDocument):
     author = ReferenceField(Account)
@@ -13,5 +14,6 @@ class News(Document):
     picture = ImageField()
     voice = FileField()
     comments= ListField(EmbeddedDocumentField(Comment))
+    good= ReferenceField(Goods)
     
 

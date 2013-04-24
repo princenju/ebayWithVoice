@@ -19,9 +19,10 @@ def login(request):
 def register(request):
     userName=request.GET['username']
     passWord=request.GET['password']
-    test=Account.create_user(userName, passWord, "wzn@wzn.com")
-    test.save
-    return HttpResponse(test.username)
+    test=Account.create_user(userName, passWord)
+    test.portrait=open("E:\picture\\test1.jpg","rb")
+    test.save()
+    return HttpResponse(str(test.to_mongo()))
 
 @login_required
 def logout(request):
@@ -48,3 +49,7 @@ def showFriends(request):
     ids=request.user.friends
     friends=Account.objects(pk__in=ids).as_pymongo()
     return HttpResponse(friends)
+
+@login_required
+def getPortrait(request):
+    return HttpResponse(request.user.portrait.read(),mimetype="image/jpeg")
