@@ -26,6 +26,7 @@ def getNewsList(request):
     result = list(result)
     for news in result:
         del(news['_types'])
+        del(news['_cls'])
         news['picture'] = "http://192.168.47.19:8080/news/getPicture?id=" + str(news['_id'])
         news['voice'] = "http://192.168.47.19:8080/news/getVoice?id=" + str(news['_id'])
         uid = news['author']

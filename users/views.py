@@ -2,10 +2,15 @@
 from django.http import HttpResponse
 from models import Account
 from django.contrib import auth
-from django.contrib.auth.decorators import login_required  
+from django.contrib.auth.decorators import login_required
+import json  
 
 def login(request):
-    user=auth.authenticate(username=request.POST['username'], password=request.POST['password'])
+    data=request.raw_post_data
+    jsonObject=json.loads(data)
+    userName=jsonObject['username']
+    passWord=jsonObject['password']
+    user=auth.authenticate(username=userName, password=passWord)
     if user is not None:
         if user.is_active:
             auth.login(request, user)
