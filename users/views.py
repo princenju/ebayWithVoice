@@ -4,6 +4,10 @@ from models import Account
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 import json  
+from goods.models import Goods
+from bson import json_util as ju
+from users.models import Buy
+#DBRef
 
 def login(request):
     data=request.raw_post_data
@@ -25,7 +29,7 @@ def register(request):
     userName=request.GET['username']
     passWord=request.GET['password']
     test=Account.create_user(userName, passWord)
-    test.portrait=open("E:\picture\\test1.jpg","rb")
+    test.portrait=open("E:\picture\\test2.jpg","rb")
     test.save()
     return HttpResponse(str(test.to_mongo()))
 
@@ -55,6 +59,32 @@ def showFriends(request):
     friends=Account.objects(pk__in=ids).as_pymongo()
     return HttpResponse(friends)
 
-@login_required
 def getPortrait(request):
-    return HttpResponse(request.user.portrait.read(),mimetype="image/jpeg")
+    nid=request.GET['id']
+    user=Account.objects(pk=nid).first()
+    return HttpResponse(user.portrait.read()
+                        ,mimetype="image/jpeg")
+    
+@login_required
+def addGoods(request):
+    gid=request.GET['id']
+    good=Goods.objects(pk=gid).first()
+    buylog=Buy()
+    buylog.good=good
+    request.user.buylog=request.user.buylog+[buylog]
+    request.user.save()
+    return HttpResponse("buy success")
+
+@login_required
+def getGoodsList(request):
+    buylogs=request.user.to_mongo()['buylog']
+    for buylog in buylogs:
+#        buylog=buylog.to_mongo()
+        del(buylog['_types'])
+        del(buylog["_cls"])
+        buylog["time"]=str(buylog["time"])
+        name=Goods.objects(pk=buylog["good"].id).first().name
+        buylog['name']=name
+        buylog['id']="http://192.168.47.19:8080/goods/getGoods?id="+str(buylog["good"].id)
+        del(buylog['good'])
+    return HttpResponse(ju.dumps(buylogs))

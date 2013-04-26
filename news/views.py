@@ -37,14 +37,12 @@ def getNewsList(request):
     result = dumps(result)
     return HttpResponse(result)
 
-@login_required
 def getPicture(request):
     nid = request.GET['id']
     result = News.objects(pk=nid).first()
     image = result.picture.read()
     return HttpResponse(image, mimetype="image/jpeg")
 
-@login_required   
 def getVoice(request):
     nid = request.GET['id']
     result = News.objects(pk=nid).first()
@@ -54,7 +52,7 @@ def getVoice(request):
 @login_required
 def addComment(request):
     nid = request.GET['id']
-    content = request.POST['content']
+    content = request.GET['content']
     voice = open("E:\music\\test\\CD8\\test.wav", "rb")#change to data from request
     comment = Comment()
     comment.content = content

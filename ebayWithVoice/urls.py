@@ -21,6 +21,8 @@ urlpatterns = patterns('',
     url(r'^users/addFriend$','users.views.addFriend'),
     url(r'^users/showFriends$','users.views.showFriends'),
     url(r'^users/getPortrait$','users.views.getPortrait'),
+    url(r'^users/addGoods$','users.views.addGoods'),
+    url(r'^users/getGoodsList$','users.views.getGoodsList'),
     
     url(r'^news/addNews$','news.views.addNews'),
     url(r'^news/getNewsList$','news.views.getNewsList'),
@@ -32,4 +34,5 @@ urlpatterns = patterns('',
     url(r'^goods/addGoods$','goods.views.addGoods'),
     url(r'^goods/getGoods$','goods.views.getGoods'),
     url(r'^goods/getPicture$','goods.views.getPicture'),
+    
 )
