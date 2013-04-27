@@ -12,6 +12,8 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+FILE_UPLOAD_HANDLERS=("django.core.files.uploadhandler.TemporaryFileUploadHandler",)
+
 AUTHENTICATION_BACKENDS = ('mongoengine.django.auth.MongoEngineBackend',)
 
 SESSION_ENGINE = 'mongoengine.django.sessions'

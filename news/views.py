@@ -5,17 +5,25 @@ from models import News
 from django.contrib.auth.decorators import login_required
 from news.models import Comment
 from bson.json_util import dumps
+import json
+#TemporaryUploadedFile
+#InMemoryUploadedFile
 
 @login_required
 def addNews(request):
+    data=request.raw_post_data
+#    jsonObject=json.loads(data)
     news = News()
     user = Account.objects(username='wzn').first()#change to request.user
     news.author = user
-    news.discription = "hhhhhhhh"#change to data from request
-    news.picture = open("E:\picture\\test.jpg", "rb")#change to data from request
-    news.voice = open("E:\music\\test\\CD8\\test.wav", "rb")#change to data from request
+#    if jsonObject:
+#        news.discription = jsonObject['description']
+#    news.save()
+    news.picture = open(request.FILES['picture'].temporary_file_path(), "rb")
+#    news.voice = open(request.FILES['voice'].temporary_file_path(), "rb")#change to data from request
     news.save()
-    return HttpResponse("success")
+    
+    return HttpResponse(news.picture.read(),mimetype="image/jpeg")
 
 @login_required
 def getNewsList(request):
