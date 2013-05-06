@@ -29,7 +29,7 @@ def register(request):
     userName=request.GET['username']
     passWord=request.GET['password']
     test=Account.create_user(userName, passWord)
-    test.portrait=open("E:\picture\\test2.jpg","rb")
+    test.portrait=open("C:\Users\\zinwang\\picture\\test.jpg","rb")
     test.save()
     return HttpResponse(str(test.to_mongo()))
 
@@ -44,7 +44,7 @@ def newPage(request):
 
 @login_required
 def addFriend(request):
-    name=request.POST['username']
+    name=request.GET['username']
     friend=Account.objects(username=name).first()
     user=Account.objects(username=request.user.username).first()
     user.friends=user.friends+[str(friend.id)]

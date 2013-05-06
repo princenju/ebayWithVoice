@@ -7,7 +7,7 @@ def addGoods(request):
     goods=Goods()
     goods.name=request.GET['name']
     goods.description=request.GET['description']
-    goods.picture=open("E:\picture\\test.jpg","rb")
+    goods.picture=open("tmp\\test.png","rb")
 #    goods.time=datetime.datetime.now
     goods.save()
     return HttpResponse("success")

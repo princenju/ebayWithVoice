@@ -29,6 +29,8 @@ urlpatterns = patterns('',
     url(r'^news/getPicture$','news.views.getPicture'),
     url(r'^news/getVoice$','news.views.getVoice'),
     url(r'^news/addComment$','news.views.addComment'),
+    url(r'^news/getComments$','news.views.getComments'),
+    url(r'^news/getCommentVoice$','news.views.getCommentVoice'),
     url(r'^news/deleteNews$','news.views.deleteNews'),
     
     url(r'^goods/addGoods$','goods.views.addGoods'),
