@@ -6,26 +6,26 @@ from django.contrib.auth.decorators import login_required
 from bson.json_util import dumps
 from goods.models import Goods
 from bson.objectid import ObjectId
+import json
+import urlparse
+#from cgi import log
 # TemporaryUploadedFile
 # InMemoryUploadedFile
-endpoint = "http://127.0.0.1:8000/"
+endpoint = "http://192.168.47.19:8080/"
 @login_required
 def addNews(request):
-#    data=request.raw_post_data
-#    jsonObject=json.loads(data)
+    url=request.POST['url']
     news = News()
-    user = Account.objects(username='wzn').first()  # change to request.user
+    user = request.user  # change to request.user
     news.author = user
-#    news.discription = jsonObject['description']
-#    news.picture = open(request.FILES['picture'].temporary_file_path(), "rb")
-#    news.voice = open(request.FILES['voice'].temporary_file_path(), "rb")#change to data from request
-    news.discription = "description"
-    news.picture = open("tmp\\test.png", "rb")
-    news.voice = open("tmp\\test.mp3", "rb")
-    news.good = Goods.objects(pk="518746aee8384318b4ad5f8f").first()
+    news.picture = open(request.FILES['picture'].temporary_file_path(), "rb")
+    news.voice = open(request.FILES['voice'].temporary_file_path(), "rb")#change to data from request
+    result=urlparse.urlparse(url)
+    params=urlparse.parse_qs(result.query,True)
+    gid=params['id']
+    news.good = Goods.objects(pk=gid[0]).first()
     news.save()
-    
-    return HttpResponse(news.picture.read(), mimetype="image/jpeg")
+    return HttpResponse("success")
 
 @login_required
 def getNewsList(request):
@@ -44,7 +44,7 @@ def getNewsList(request):
         gid = news['good']
         good = News.objects(good=gid).first().good
         news['good'] = endpoint + "goods/getGoods?id=" + str(good.pk)
-        news['author'] = {"portrait": endpoint + "/users/getPortrait?id=" + str(user.pk), "name": user.username}
+        news['author'] = {"portrait": endpoint + "users/getPortrait?id=" + str(user.pk), "name": user.username}
         news['comments'] = endpoint + "news/getComments?id=" + str(news['_id'])
         news['_id'] = endpoint + "news/getNewsDetail?id=" + str(news['_id'])
     result = dumps(result)
@@ -64,19 +64,24 @@ def getVoice(request):
 
 @login_required
 def addComment(request):
-    nid = request.GET['id']
-    content = request.GET['content']
-    voice = open("tmp\\test.mp3", "rb")  # change to data from request
+    result=urlparse.urlparse(request.POST['comment_url'])
+    params=urlparse.parse_qs(result.query,True)
+    nid=params['id']
     comment = Comment()
-    comment.content = content
-    comment.voice = voice
+    comment.content =""
+    if request.POST.has_key("content"):
+        content = request.POST['content']
+        comment.content = content
+    if request.FILES.has_key("voice"):
+        voice =open(request.FILES['voice'].temporary_file_path(), "rb")  # change to data from request
+        comment.voice = voice
     comment.author = request.user
-    news = News.objects(pk=nid).first()
+    news = News.objects(pk=nid[0]).first()
     news.comments = news.comments + [comment]
     news.save()
     return HttpResponse("success")
 
-@login_required()
+#@login_required()
 def getComments(request):
     nid=request.GET['id']
     news=News.objects(pk=nid).as_pymongo()
@@ -86,7 +91,10 @@ def getComments(request):
         del(comment["_cls"])
         uid=comment["author"]
         user = News.objects(author=uid).first().author
-        comment["voice"]=endpoint + "news/getCommentVoice?vid="+str(comment["voice"])
+        if comment["voice"]!=None:
+            comment["voice"]=endpoint + "news/getCommentVoice?vid="+str(comment["voice"])
+        else:
+            comment["voice"]=""
         comment["username"]=user.username
         comment["portrait"]=endpoint+"users/getPortrait?id="+str(user.pk)
         del(comment["author"])
