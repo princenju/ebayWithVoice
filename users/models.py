@@ -4,7 +4,6 @@ from mongoengine import ListField
 from mongoengine import ImageField
 from mongoengine import EmbeddedDocumentField
 from goods.models import Goods
-from bson.objectid import ObjectId
 from mongoengine import EmbeddedDocument
 import datetime
 from mongoengine import DateTimeField

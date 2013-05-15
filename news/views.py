@@ -6,7 +6,6 @@ from django.contrib.auth.decorators import login_required
 from bson.json_util import dumps
 from goods.models import Goods
 from bson.objectid import ObjectId
-import json
 import urlparse
 #from cgi import log
 # TemporaryUploadedFile
@@ -32,7 +31,11 @@ def getNewsList(request):
     # depend on the friends depart
     num = request.GET['num']
     allFriends = Account.objects(pk__in=request.user.friends).all()
-    result = News.objects(author__in=allFriends)[int(num):int(num) + 15].as_pymongo()
+    number = News.objects(author__in=allFriends).count()
+    if int(num)*15>number:
+        result=[]
+        return HttpResponse(dumps(result))
+    result = News.objects(author__in=allFriends)[int(num*15):int(num)*15 + 15].order_by("-time").as_pymongo()
     result = list(result)
     for news in result:
         del(news['_types'])
@@ -46,7 +49,9 @@ def getNewsList(request):
         news['good'] = endpoint + "goods/getGoods?id=" + str(good.pk)
         news['author'] = {"portrait": endpoint + "users/getPortrait?id=" + str(user.pk), "name": user.username}
         news['comments'] = endpoint + "news/getComments?id=" + str(news['_id'])
-        news['_id'] = endpoint + "news/getNewsDetail?id=" + str(news['_id'])
+#        news['_id'] = endpoint + "news/getNewsDetail?id=" + str(news['_id'])
+        del(news['_id'])
+        news['time']=str(news['time'])
     result = dumps(result)
     return HttpResponse(result)
 
@@ -100,7 +105,6 @@ def getComments(request):
         del(comment["author"])
     return HttpResponse(dumps(comments))
 
-@login_required()
 def getCommentVoice(request):
     vid=request.GET['vid']
     a=News.objects(comments__voice=ObjectId(str(vid))).first()

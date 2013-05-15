@@ -2,6 +2,8 @@ from mongoengine import Document, ReferenceField, CASCADE, StringField, ImageFie
 from users.models import Account
 from mongoengine import ListField,EmbeddedDocumentField
 from goods.models import Goods
+from mongoengine.fields import DateTimeField
+import datetime
 # Create your models here.
 class Comment(EmbeddedDocument):
     author = ReferenceField(Account)
@@ -15,5 +17,6 @@ class News(Document):
     voice = FileField()
     comments= ListField(EmbeddedDocumentField(Comment))
     good= ReferenceField(Goods)
+    time=DateTimeField(default=datetime.datetime.now)
     
 
