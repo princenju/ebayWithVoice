@@ -8,7 +8,7 @@ from goods.models import Goods
 from bson import json_util as ju
 from users.models import Buy
 #DBRef
-
+endpoint = "http://192.168.47.19:8080/"
 def login(request):
     data=request.raw_post_data
     jsonObject=json.loads(data)
@@ -18,7 +18,21 @@ def login(request):
     if user is not None:
         if user.is_active:
             auth.login(request, user)
-            return HttpResponse("success")
+            result=user.to_mongo()
+            del(result['buylog'])
+#            del(result['_id'])
+            del(result['_types'])
+            del(result['is_active'])
+            del(result['is_superuser'])
+            del(result['is_staff'])
+            del(result['last_login'])
+            del(result['_cls'])
+            del(result['password'])
+            del(result['friends'])
+            del(result['date_joined'])
+            result['portrait']=endpoint+"users/getPortrait?id="+str(result['_id'])
+            del(result['_id'])
+            return HttpResponse(ju.dumps(result))
         else:
             return HttpResponse("wrong user")
     else:

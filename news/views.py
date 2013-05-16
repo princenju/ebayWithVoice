@@ -35,7 +35,7 @@ def getNewsList(request):
     if int(num)*15>number:
         result=[]
         return HttpResponse(dumps(result))
-    result = News.objects(author__in=allFriends)[int(num*15):int(num)*15 + 15].order_by("-time").as_pymongo()
+    result = News.objects(author__in=allFriends)[int(num)*15:int(num)*15 + 15].order_by("-time").as_pymongo()
     result = list(result)
     for news in result:
         del(news['_types'])
@@ -115,7 +115,37 @@ def getCommentVoice(request):
         if str(mongo['voice'])==str(vid):
             voice=comment.voice
     return HttpResponse(voice.read(),mimetype="audio/mpeg")
-    
+
+@login_required    
+def getPersonNews(request):
+    num = request.GET['num']
+    name=request.GET['name']
+    news=News.objects(author=Account.objects(username=name).first())
+    number = news.count()
+    if int(num)*15>number:
+        result=[]
+        return HttpResponse(dumps(result))
+    result = news[int(num)*15:int(num)*15 + 15].order_by("-time").as_pymongo()
+    result = list(result)
+    for news in result:
+        del(news['_types'])
+        del(news['_cls'])
+        news['picture'] = endpoint + "news/getPicture?id=" + str(news['_id'])
+        news['voice'] = endpoint + "news/getVoice?id=" + str(news['_id'])
+        uid = news['author']
+        user = News.objects(author=uid).first().author
+        gid = news['good']
+        good = News.objects(good=gid).first().good
+        news['good'] = endpoint + "goods/getGoods?id=" + str(good.pk)
+        news['author'] = {"portrait": endpoint + "users/getPortrait?id=" + str(user.pk), "name": user.username}
+        news['comments'] = endpoint + "news/getComments?id=" + str(news['_id'])
+#        news['_id'] = endpoint + "news/getNewsDetail?id=" + str(news['_id'])
+        del(news['_id'])
+        news['time']=str(news['time'])
+    result = dumps(result)
+    return HttpResponse(result)
+
+
 def deleteNews(request):
     News.objects(author=request.user).delete()
     return HttpResponse("delete all")
