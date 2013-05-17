@@ -8,9 +8,9 @@ def addGoods(request):
     goods=Goods()
     goods.name=request.GET['name']
     goods.description=request.GET['description']
-    goods.picture1=open("tmp\\test1.png","rb")
-    goods.picture2=open("tmp\\test2.png","rb")
-    goods.picture3=open("tmp\\test3.png","rb")
+    goods.picture1=open("tmp\\1.jpg","rb")
+    goods.picture2=open("tmp\\2.jpg","rb")
+    goods.picture3=open("tmp\\3.jpg","rb")
     goods.price=250.38
 #    goods.time=datetime.datetime.now
     goods.save()

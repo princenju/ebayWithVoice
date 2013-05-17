@@ -145,6 +145,18 @@ def getPersonNews(request):
     result = dumps(result)
     return HttpResponse(result)
 
+@login_required
+def getAllComments(request):
+    user=request.user
+    news=News.objects(author=user).as_pymongo()
+    news=list(news)
+#    comments=[]
+#    for new in news:
+#        for comment in new['comments']:
+#            if comment['author']==user:
+#                comments=comments+
+    return HttpResponse(dumps(news))
+        
 
 def deleteNews(request):
     News.objects(author=request.user).delete()

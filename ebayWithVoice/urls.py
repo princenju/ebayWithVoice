@@ -33,6 +33,7 @@ urlpatterns = patterns('',
     url(r'^news/getCommentVoice$','news.views.getCommentVoice'),
     url(r'^news/deleteNews$','news.views.deleteNews'),
     url(r'^news/getPersonNews$','news.views.getPersonNews'),
+    url(r'^news/getAllComments$','news.views.getAllComments'),
     
     url(r'^goods/addGoods$','goods.views.addGoods'),
     url(r'^goods/getGoods$','goods.views.getGoods'),
