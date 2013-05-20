@@ -57,11 +57,14 @@ def newPage(request):
     return HttpResponse(request.user.username)
 
 @login_required
-def addFriend(request):
+def changeFollow(request):
     name=request.GET['username']
     friend=Account.objects(username=name).first()
     user=Account.objects(username=request.user.username).first()
-    user.friends=user.friends+[str(friend.id)]
+    if str(friend.id) in user.friends:
+        user.friends.remove(str(friend.id))
+    else:
+        user.friends=user.friends+[str(friend.id)]
     user.save()
     request.user=user
     return HttpResponse("add success")
@@ -80,7 +83,7 @@ def getPortrait(request):
                         ,mimetype="image/jpeg")
     
 @login_required
-def addGoods(request):
+def buy(request):
     gid=request.GET['id']
     good=Goods.objects(pk=gid).first()
     buylog=Buy()
@@ -102,3 +105,30 @@ def getGoodsList(request):
         buylog['id']="http://192.168.47.19:8080/goods/getGoods?id="+str(buylog["good"].id)
         del(buylog['good'])
     return HttpResponse(ju.dumps(buylogs))
+
+@login_required
+def search(request):
+    name=request.GET["username"]
+    users=Account.objects(username=name).as_pymongo()
+    if users.count()==0:
+        return HttpResponse(ju.dumps([]))
+    users=list(users)
+    for user in users:
+        user["portrait"]=endpoint+"users/getPortrait?id="+str(user['_id'])
+        del(user['buylog'])
+        del(user['_types'])
+        del(user['is_active'])
+        del(user['is_superuser'])
+        del(user['is_staff'])
+        del(user['last_login'])
+        del(user['_cls'])
+        del(user['password'])
+        del(user['friends'])
+        del(user['date_joined'])
+        id=user['_id']
+        if str(id) in request.user.friends:
+            user['followed']=True
+        else:
+            user['followed']=False
+        del(user['_id'])
+    return HttpResponse(ju.dumps(users))

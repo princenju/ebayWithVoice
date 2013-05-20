@@ -7,6 +7,7 @@ from bson.json_util import dumps
 from goods.models import Goods
 from bson.objectid import ObjectId
 import urlparse
+#DBRef
 #from cgi import log
 # TemporaryUploadedFile
 # InMemoryUploadedFile
@@ -95,7 +96,7 @@ def getComments(request):
         del(comment["_types"])
         del(comment["_cls"])
         uid=comment["author"]
-        user = News.objects(author=uid).first().author
+        user = Account.objects(pk=uid.id).first()
         if comment["voice"]!=None:
             comment["voice"]=endpoint + "news/getCommentVoice?vid="+str(comment["voice"])
         else:
