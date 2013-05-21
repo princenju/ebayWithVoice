@@ -147,15 +147,23 @@ def getPersonNews(request):
     return HttpResponse(result)
 
 @login_required
-def getAllComments(request):
-    user=request.user
-    news=News.objects(author=user).as_pymongo()
-    news=list(news)
-#    comments=[]
-#    for new in news:
-#        for comment in new['comments']:
-#            if comment['author']==user:
-#                comments=comments+
+def getNewsDetail(request):
+    nid=request.GET['id']
+    news=News.objects(pk=nid).first().to_mongo()
+    del(news['_types'])
+    del(news['_cls'])
+    news['picture'] = endpoint + "news/getPicture?id=" + str(news['_id'])
+    news['voice'] = endpoint + "news/getVoice?id=" + str(news['_id'])
+    uid = news['author']
+    user = News.objects(author=uid).first().author
+    gid = news['good']
+    good = News.objects(good=gid).first().good
+    news['good'] = endpoint + "goods/getGoods?id=" + str(good.pk)
+    news['author'] = {"portrait": endpoint + "users/getPortrait?id=" + str(user.pk), "name": user.username}
+    news['comments'] = endpoint + "news/getComments?id=" + str(news['_id'])
+#    news['_id'] = endpoint + "news/getNewsDetail?id=" + str(news['_id'])
+    del(news['_id'])
+    news['time']=str(news['time'])
     return HttpResponse(dumps(news))
         
 

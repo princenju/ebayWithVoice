@@ -74,7 +74,21 @@ def showFriends(request):
 #    user=Account.objects(username=request.user.username).first()
     ids=request.user.friends
     friends=Account.objects(pk__in=ids).as_pymongo()
-    return HttpResponse(friends)
+    friends=list(friends)
+    for friend in friends:
+        del(friend["buylog"])
+        del(friend["_types"])
+        del(friend['is_active'])
+        del(friend['is_superuser'])
+        del(friend['is_staff'])
+        del(friend['last_login'])
+        del(friend['_cls'])
+        del(friend['password'])
+        del(friend['friends'])
+        del(friend['date_joined'])
+        friend['portrait']=endpoint+"users/getPortrait?id="+str(friend['_id'])
+        del(friend['_id'])
+    return HttpResponse(ju.dumps(friends))
 
 def getPortrait(request):
     nid=request.GET['id']
