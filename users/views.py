@@ -43,7 +43,7 @@ def register(request):
     userName=request.GET['username']
     passWord=request.GET['password']
     test=Account.create_user(userName, passWord)
-    test.portrait=open("C:\Users\\zinwang\\picture\\test.jpg","rb")
+    test.portrait=open("tmp\\zh.jpg","rb")
     test.save()
     return HttpResponse(str(test.to_mongo()))
 

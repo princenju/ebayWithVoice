@@ -8,10 +8,10 @@ def addGoods(request):
     goods=Goods()
     goods.name=request.GET['name']
     goods.description=request.GET['description']
-    goods.picture1=open("tmp\\1.jpg","rb")
-    goods.picture2=open("tmp\\2.jpg","rb")
-    goods.picture3=open("tmp\\3.jpg","rb")
-    goods.price=250.38
+    goods.picture1=open("tmp\\nokia1.jpg","rb")
+    goods.picture2=open("tmp\\nokia2.jpg","rb")
+    goods.picture3=open("tmp\\nokia3.jpg","rb")
+    goods.price=105
 #    goods.time=datetime.datetime.now
     goods.save()
     return HttpResponse("success")
